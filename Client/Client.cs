@@ -44,8 +44,8 @@ namespace HeliCam
             AllowRappel = true;
             AllowSpeedCalculations = true;
             AllowSpotlights = true;
-            UseRealisticFLIR = true;
-            AircraftHashes = new List<string> { "mammatus", "dodo" };
+            UseRealisticFLIR = false;
+            AircraftHashes = new List<string> { "mammatus", "dodo", "md902","polmav"};
             HelicopterHashes = new List<string>();
             Debug.WriteLine("loaded backup configuration successfully!");
             Debug.WriteLine(JsonConvert.SerializeObject(this));
@@ -91,17 +91,17 @@ namespace HeliCam
         private readonly List<ThermalBone> _thermalBones = new List<ThermalBone>
         {
             new ThermalBone("BONETAG_SPINE1", new Vector3(-0.25f), new Vector3(0.19f, 0.15f, 0.49f)),
-            //new ThermalBone("BONETAG_PELVIS", new Vector3(-0.2f, -0.2f, 0.2f), new Vector3(0.2f, 0.2f, 0.6f)),
-            //new ThermalBone("BONETAG_HEAD", new Vector3(-0.1f), new Vector3(0.1f, 0.2f, 0.2f)),
-            //new ThermalBone("BONETAG_L_UPPERARM", new Vector3(-0.15f, -0.15f, -0.2f), new Vector3(0.15f, 0.15f, 0.2f)),
-            //new ThermalBone("BONETAG_R_UPPERARM", new Vector3(-0.15f, -0.15f, -0.2f), new Vector3(0.15f, 0.15f, 0.2f)),
-            //new ThermalBone("BONETAG_L_FOREARM", new Vector3(-0.08f, -0.08f, -0.2f), new Vector3(0.08f, 0.08f, 0.1f)),
-            //new ThermalBone("BONETAG_R_FOREARM", new Vector3(-0.08f, -0.08f, -0.2f), new Vector3(0.08f, 0.08f, 0.1f)),
+            new ThermalBone("BONETAG_PELVIS", new Vector3(-0.2f, -0.2f, 0.2f), new Vector3(0.2f, 0.2f, 0.6f)),
+            new ThermalBone("BONETAG_HEAD", new Vector3(-0.1f), new Vector3(0.1f, 0.2f, 0.2f)),
+            new ThermalBone("BONETAG_L_UPPERARM", new Vector3(-0.15f, -0.15f, -0.2f), new Vector3(0.15f, 0.15f, 0.2f)),
+            new ThermalBone("BONETAG_R_UPPERARM", new Vector3(-0.15f, -0.15f, -0.2f), new Vector3(0.15f, 0.15f, 0.2f)),
+            new ThermalBone("BONETAG_L_FOREARM", new Vector3(-0.08f, -0.08f, -0.2f), new Vector3(0.08f, 0.08f, 0.1f)),
+            new ThermalBone("BONETAG_R_FOREARM", new Vector3(-0.08f, -0.08f, -0.2f), new Vector3(0.08f, 0.08f, 0.1f)),
             new ThermalBone("wheel_lf", new Vector3(-0.3f), new Vector3(0.3f), ThermalType.WHEEL),
             new ThermalBone("wheel_rf", new Vector3(-0.3f), new Vector3(0.3f), ThermalType.WHEEL),
             new ThermalBone("wheel_lr", new Vector3(-0.3f), new Vector3(0.3f), ThermalType.WHEEL),
             new ThermalBone("wheel_rr", new Vector3(-0.3f), new Vector3(0.3f), ThermalType.WHEEL),
-            //new ThermalBone("engine", new Vector3(-0.7f, -0.7f, -0.3f), new Vector3(0.7f, 0.7f, 0.4f), ThermalType.ENGINE),
+            new ThermalBone("engine", new Vector3(-0.7f, -0.7f, -0.3f), new Vector3(0.7f, 0.7f, 0.4f), ThermalType.ENGINE),
             new ThermalBone("exhaust", new Vector3(-0.3f, -0.3f, -0.05f), new Vector3(0.3f, 0.3f, 0.2f), ThermalType.ENGINE)
         };
         private Vector3 _dummy = new Vector3(-0.3f);
@@ -588,6 +588,7 @@ namespace HeliCam
                 scaleform.Dispose();
                 cam.Delete();
                 Game.Nightvision = false;
+                Game.ThermalVision = false;
             }
         }
         #endregion
@@ -721,6 +722,9 @@ namespace HeliCam
         #region Zoom Vision Markers
         private void ChangeVision()
         {
+            ClearTimecycleModifier();
+            Game.Nightvision = false;
+            Game.ThermalVision = false;
             if (_visionState == 0)
             {
                 ClearTimecycleModifier();
@@ -733,6 +737,7 @@ namespace HeliCam
             {
                 Game.Nightvision = false;
                 SetTimecycleModifier("NG_blackout");
+                Game.ThermalVision = true;
                 SetTimecycleModifierStrength(0.992f);
                 _visionState = 2;
             }
